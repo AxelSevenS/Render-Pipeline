@@ -145,9 +145,9 @@ half3 CustomLighting( InputData inputData, SurfaceData surfaceData, Light light 
     half radiance = GetRadiance(inputData.normalWS, light.direction);
     half shade = GetShade(radiance, light.distanceAttenuation * light.shadowAttenuation);
 
-    half3 litColor = (light.color * _AmbientLight);
+    half3 litColor = (light.color * 0.3/*  * _AmbientLight */);
     
-    half accentIntensity = 1;
+    half accentIntensity = surfaceData.specular.g;
     if (accentIntensity > 0) {
 
         half accent = GetAccent(shade);
@@ -156,9 +156,10 @@ half3 CustomLighting( InputData inputData, SurfaceData surfaceData, Light light 
 
     half3 finalColor = shade * surfaceData.albedo * litColor;
 
-    if (length(surfaceData.specular) > 0 && surfaceData.smoothness > 0) {
+    half specularIntensity = surfaceData.specular.r;
+    if (specularIntensity > 0 && surfaceData.smoothness > 0) {
 
-        half specular = surfaceData.specular * GetSpecular(inputData.normalWS, inputData.viewDirectionWS, light.direction, surfaceData.smoothness, shade);
+        half specular = specularIntensity * GetSpecular(inputData.normalWS, inputData.viewDirectionWS, light.direction, surfaceData.smoothness, shade);
         finalColor += litColor * specular;
     }
 

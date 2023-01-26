@@ -298,9 +298,9 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
 
         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
         {
-            lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
-                                                                          inputData.normalWS, inputData.viewDirectionWS,
-                                                                          surfaceData.clearCoatMask, specularHighlightsOff);
+            // lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
+            //                                                               inputData.normalWS, inputData.viewDirectionWS,
+            //                                                               surfaceData.clearCoatMask, specularHighlightsOff);
             lightingData.additionalLightsColor += CustomLighting(inputData, surfaceData, light);
         }
     }
@@ -311,9 +311,9 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
 
         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
         {
-            lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
-                                                                          inputData.normalWS, inputData.viewDirectionWS,
-                                                                          surfaceData.clearCoatMask, specularHighlightsOff);
+            // lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
+            //                                                               inputData.normalWS, inputData.viewDirectionWS,
+            //                                                               surfaceData.clearCoatMask, specularHighlightsOff);
             lightingData.additionalLightsColor += CustomLighting(inputData, surfaceData, light);
         }
     LIGHT_LOOP_END

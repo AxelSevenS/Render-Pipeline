@@ -50,6 +50,21 @@ Shader "Hidden/Universal Render Pipeline/Bloom"
         #endif
         }
 
+        float RGBtoValue(float3 rgb) {
+            return max(rgb.x, max(rgb.y, rgb.z));
+        }
+
+        float RGBtoSaturation(float3 rgb) {
+            float maxVal = max(rgb.x, max(rgb.y, rgb.z));
+
+            if (maxVal != 0) {
+                float minVal = min(rgb.x, min(rgb.y, rgb.z));
+                float delta = maxVal - minVal;
+                return delta / maxVal;		// s
+            } else
+                return 0;
+        }
+
         half4 FragPrefilter(Varyings input) : SV_Target
         {
             UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -92,6 +107,10 @@ Shader "Hidden/Universal Render Pipeline/Bloom"
             half softness = clamp(brightness - Threshold + ThresholdKnee, 0.0, 2.0 * ThresholdKnee);
             softness = (softness * softness) / (4.0 * ThresholdKnee + 1e-4);
             half multiplier = max(brightness - Threshold, softness) / max(brightness, 1e-4);
+            multiplier += RGBtoValue(color)*4;
+            multiplier -= RGBtoSaturation(color)*7.5;
+            // multiplier *= RGBtoValue(color);
+            // multiplier /= RGBtoSaturation(color);
             color *= multiplier;
 
             // Clamp colors to positive once in prefilter. Encode can have a sqrt, and sqrt(-x) == NaN. Up/Downsample passes would then spread the NaN.
