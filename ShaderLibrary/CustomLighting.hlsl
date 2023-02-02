@@ -147,7 +147,7 @@ half3 CustomLighting( InputData inputData, SurfaceData surfaceData, Light light 
 
     half3 litColor = (light.color * 0.3/*  * _AmbientLight */);
     
-    half accentIntensity = surfaceData.specular.g;
+    half accentIntensity = 1 - surfaceData.smoothness;
     if (accentIntensity > 0) {
 
         half accent = GetAccent(shade);
@@ -159,8 +159,8 @@ half3 CustomLighting( InputData inputData, SurfaceData surfaceData, Light light 
     half specularIntensity = surfaceData.specular.r;
     if (specularIntensity > 0 && surfaceData.smoothness > 0) {
 
-        half specular = specularIntensity * GetSpecular(inputData.normalWS, inputData.viewDirectionWS, light.direction, surfaceData.smoothness, shade);
-        finalColor += litColor * specular;
+        half specular = GetSpecular(inputData.normalWS, inputData.viewDirectionWS, light.direction, surfaceData.smoothness, shade);
+        finalColor += litColor * surfaceData.specular * specular;
     }
 
     return finalColor;

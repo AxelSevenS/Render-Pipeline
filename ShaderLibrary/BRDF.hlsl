@@ -164,22 +164,23 @@ BRDFData CreateClearCoatBRDFData(SurfaceData surfaceData, inout BRDFData brdfDat
 half3 EnvironmentBRDFSpecular(BRDFData brdfData, half fresnelTerm)
 {
     return 0.0.xxx;
-    float surfaceReduction = 1.0 / (brdfData.roughness2 + 1.0);
-    return half3(surfaceReduction * lerp(brdfData.specular, brdfData.grazingTerm, fresnelTerm));
+    // float surfaceReduction = 1.0 / (brdfData.roughness2 + 1.0);
+    // return half3(surfaceReduction * lerp(brdfData.specular, brdfData.grazingTerm, fresnelTerm));
 }
 
 half3 EnvironmentBRDF(BRDFData brdfData, half3 indirectDiffuse, half3 indirectSpecular, half fresnelTerm)
 {
     half3 c = indirectDiffuse * brdfData.albedo;
-    c += indirectSpecular * EnvironmentBRDFSpecular(brdfData, fresnelTerm);
+    // c += indirectSpecular * EnvironmentBRDFSpecular(brdfData, fresnelTerm);
     return c;
 }
 
 // Environment BRDF without diffuse for clear coat
 half3 EnvironmentBRDFClearCoat(BRDFData brdfData, half clearCoatMask, half3 indirectSpecular, half fresnelTerm)
 {
-    float surfaceReduction = 1.0 / (brdfData.roughness2 + 1.0);
-    return indirectSpecular * EnvironmentBRDFSpecular(brdfData, fresnelTerm) * clearCoatMask;
+    // float surfaceReduction = 1.0 / (brdfData.roughness2 + 1.0);
+    // return indirectSpecular * EnvironmentBRDFSpecular(brdfData, fresnelTerm) * clearCoatMask;
+    return 0.0.xxx;
 }
 
 // Computes the scalar specular term for Minimalist CookTorrance BRDF
