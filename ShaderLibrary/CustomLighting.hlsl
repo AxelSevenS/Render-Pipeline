@@ -36,7 +36,7 @@ half PhongReflection( half3 normal, half3 viewDir, half3 lightDir, half smoothne
 half GetAccent(half luminance) {
     // P-Curve
 
-    half h = 5 * luminance + 1;
+    half h = 4.5 * luminance + 1;
     return h * exp(1-h);
 }
 
@@ -90,22 +90,26 @@ half3 CustomLighting( InputData inputData, SurfaceData surfaceData, Light light 
     half radiance = GetRadiance(inputData.normalWS, light.direction);
     half shade = GetShade(radiance, light.distanceAttenuation * light.shadowAttenuation);
 
-    half3 litColor = (light.color * 0.3/*  * _AmbientLight */);
+    half3 albedo = surfaceData.albedo;
     
-    half accentIntensity = 1 - surfaceData.smoothness;
+    half accentIntensity = (1 - surfaceData.smoothness);
     if (accentIntensity > 0) {
 
         half accent = GetAccent(shade);
-        litColor = lerp(litColor, ColorSaturation(litColor, accentIntensity), accent);
+
+        float3 hsv = RgbToHsv(albedo);
+        float3 saturatedColor = saturate(HsvToRgb(float3(hsv.r, saturate(hsv.g + accentIntensity), hsv.b)));
+
+        albedo = lerp(albedo, saturatedColor, accent);
     }
 
-    half3 finalColor = shade * surfaceData.albedo * litColor;
+    half3 finalColor = shade * albedo * (light.color * 0.3);
 
     half specularIntensity = surfaceData.specular.r;
     if (specularIntensity > 0 && surfaceData.smoothness > 0) {
 
         half specular = GetSpecular(inputData.normalWS, inputData.viewDirectionWS, light.direction, surfaceData.smoothness, shade);
-        finalColor += litColor * surfaceData.specular * specular;
+        finalColor += light.color * surfaceData.specular * specular;
     }
 
     return finalColor;
