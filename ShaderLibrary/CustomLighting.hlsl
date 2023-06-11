@@ -105,8 +105,8 @@ half3 CustomLighting( InputData inputData, SurfaceData surfaceData, Light light 
 
     half3 finalColor = shade * albedo * (light.color * 0.3);
 
-    half specularIntensity = surfaceData.specular.r;
-    if (specularIntensity > 0 && surfaceData.smoothness > 0) {
+    half specularIntensity = length(surfaceData.specular);
+    if (specularIntensity > 0) {
 
         half specular = GetSpecular(inputData.normalWS, inputData.viewDirectionWS, light.direction, surfaceData.smoothness, shade);
         finalColor += light.color * surfaceData.specular * specular;
