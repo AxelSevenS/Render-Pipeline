@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using Object = UnityEngine.Object;
 
 namespace UnityEditor.Rendering.Universal
 {
+    /// <summary>
+    /// Editor script for a <c>ScriptableRendererData</c> class.
+    /// </summary>
     [CustomEditor(typeof(ScriptableRendererData), true)]
     public class ScriptableRendererDataEditor : Editor
     {
@@ -52,6 +56,7 @@ namespace UnityEditor.Rendering.Universal
             ClearEditorsList();
         }
 
+        /// <inheritdoc/>
         public override void OnInspectorGUI()
         {
             if (m_RendererFeatures == null)
@@ -86,13 +91,18 @@ namespace UnityEditor.Rendering.Universal
             EditorGUILayout.Space();
 
             //Add renderer
-            if (GUILayout.Button("Add Renderer Feature", EditorStyles.miniButton))
+            using (var hscope = new EditorGUILayout.HorizontalScope())
             {
-                AddPassMenu();
+                if (GUILayout.Button("Add Renderer Feature", EditorStyles.miniButton))
+                {
+                    var r = hscope.rect;
+                    var pos = new Vector2(r.x + r.width / 2f, r.yMax + 18f);
+                    FilterWindow.Show(pos, new ScriptableRendererFeatureProvider(this));
+                }
             }
         }
 
-        private bool GetCustomTitle(Type type, out string title)
+        internal bool GetCustomTitle(Type type, out string title)
         {
             var isSingleFeature = type.GetCustomAttribute<DisallowMultipleRendererFeature>();
             if (isSingleFeature != null)
@@ -134,16 +144,18 @@ namespace UnityEditor.Rendering.Universal
                 string tooltip;
                 GetTooltip(rendererFeatureObjRef.GetType(), out tooltip);
 
+                string helpURL;
+                DocumentationUtils.TryGetHelpURL(rendererFeatureObjRef.GetType(), out helpURL);
+
                 // Get the serialized object for the editor script & update it
                 Editor rendererFeatureEditor = m_Editors[index];
                 SerializedObject serializedRendererFeaturesEditor = rendererFeatureEditor.serializedObject;
                 serializedRendererFeaturesEditor.Update();
 
-
                 // Foldout header
                 EditorGUI.BeginChangeCheck();
                 SerializedProperty activeProperty = serializedRendererFeaturesEditor.FindProperty("m_Active");
-                bool displayContent = CoreEditorUtils.DrawHeaderToggle(EditorGUIUtility.TrTextContent(title, tooltip), renderFeatureProperty, activeProperty, pos => OnContextClick(pos, index));
+                bool displayContent = CoreEditorUtils.DrawHeaderToggle(EditorGUIUtility.TrTextContent(title, tooltip), renderFeatureProperty, activeProperty, pos => OnContextClick(pos, index), null, null, helpURL);
                 hasChangedProperties |= EditorGUI.EndChangeCheck();
 
                 // ObjectEditor
@@ -209,31 +221,25 @@ namespace UnityEditor.Rendering.Universal
             else
                 menu.AddItem(EditorGUIUtility.TrTextContent("Move Down"), false, () => MoveComponent(id, 1));
 
+            AddShowAdditionalPropertiesMenuItem(ref menu, id);
+
             menu.AddSeparator(string.Empty);
             menu.AddItem(EditorGUIUtility.TrTextContent("Remove"), false, () => RemoveComponent(id));
 
             menu.DropDown(new Rect(position, Vector2.zero));
         }
 
-        private void AddPassMenu()
+        private void AddShowAdditionalPropertiesMenuItem(ref GenericMenu menu, int id)
         {
-            GenericMenu menu = new GenericMenu();
-            TypeCache.TypeCollection types = TypeCache.GetTypesDerivedFrom<ScriptableRendererFeature>();
-            foreach (Type type in types)
+            if (m_Editors[id].GetType() == typeof(FullScreenPassRendererFeatureEditor))
             {
-                var data = target as ScriptableRendererData;
-                if (data.DuplicateFeatureCheck(type))
-                {
-                    continue;
-                }
-
-                string path = GetMenuNameFromType(type);
-                menu.AddItem(new GUIContent(path), false, AddComponent, type.Name);
+                var featureReference = m_Editors[id] as FullScreenPassRendererFeatureEditor;
+                bool additionalPropertiesAreCurrentlyOn = featureReference.showAdditionalProperties;
+                menu.AddItem(EditorGUIUtility.TrTextContent("Show Additional Properties"), additionalPropertiesAreCurrentlyOn, () => featureReference.showAdditionalProperties = !additionalPropertiesAreCurrentlyOn);
             }
-            menu.ShowAsContext();
         }
 
-        private void AddComponent(object type)
+        internal void AddComponent(string type)
         {
             serializedObject.Update();
 
@@ -309,23 +315,6 @@ namespace UnityEditor.Rendering.Universal
 
             // Force save / refresh
             ForceSave();
-        }
-
-        private string GetMenuNameFromType(Type type)
-        {
-            string path;
-            if (!GetCustomTitle(type, out path))
-            {
-                path = ObjectNames.NicifyVariableName(type.Name);
-            }
-
-            if (type.Namespace != null)
-            {
-                if (type.Namespace.Contains("Experimental"))
-                    path += " (Experimental)";
-            }
-
-            return path;
         }
 
         private string ValidateName(string name)

@@ -3,6 +3,7 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/AmbientOcclusion.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
@@ -95,21 +96,13 @@ float4x4 ApplyCameraTranslationToInverseMatrix(float4x4 inverseModelMatrix)
 {
     return inverseModelMatrix;
 }
-float4x4 GetRawUnityObjectToWorld()
-{
-    return unity_ObjectToWorld;
-}
-float4x4 GetRawUnityWorldToObject()
-{
-    return unity_WorldToObject;
-}
 //End of compatibility functions
 
 float4x4 VFXGetObjectToWorldMatrix()
 {
     // NOTE: If using the new generation path, explicitly call the object matrix (since the particle matrix is now baked into UNITY_MATRIX_M)
-#ifdef HAVE_VFX_MODIFICATION
-    return GetRawUnityObjectToWorld();
+#if defined(HAVE_VFX_MODIFICATION) && !defined(SHADER_STAGE_COMPUTE)
+    return GetSGVFXUnityObjectToWorld();
 #else
     return GetObjectToWorldMatrix();
 #endif
@@ -118,8 +111,8 @@ float4x4 VFXGetObjectToWorldMatrix()
 float4x4 VFXGetWorldToObjectMatrix()
 {
     // NOTE: If using the new generation path, explicitly call the object matrix (since the particle matrix is now baked into UNITY_MATRIX_I_M)
-#ifdef HAVE_VFX_MODIFICATION
-    return GetRawUnityWorldToObject();
+#if defined(HAVE_VFX_MODIFICATION) && !defined(SHADER_STAGE_COMPUTE)
+    return GetSGVFXUnityWorldToObject();
 #else
     return GetWorldToObjectMatrix();
 #endif
@@ -170,6 +163,17 @@ void VFXApplyShadowBias(inout float4 posCS, inout float3 posWS)
     posCS = VFXTransformPositionWorldToClip(posWS);
 }
 
+float4 VFXApplyAO(float4 color, float4 posCS)
+{
+#if defined(_SCREEN_SPACE_OCCLUSION) && !defined(_SURFACE_TYPE_TRANSPARENT)
+    float2 normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(posCS);
+    AmbientOcclusionFactor aoFactor = GetScreenSpaceAmbientOcclusion(normalizedScreenSpaceUV);
+    color.rgb *= aoFactor.directAmbientOcclusion;
+#endif
+
+    return color;
+}
+
 float4 VFXApplyFog(float4 color,float4 posCS,float3 posWS)
 {
    float4 fog = (float4)0;
@@ -192,3 +196,18 @@ float3 VFXGetCameraWorldDirection()
 {
     return unity_CameraToWorld._m02_m12_m22;
 }
+
+#if defined(_GBUFFER_NORMALS_OCT)
+#define VFXComputePixelOutputToNormalBuffer(i,normalWS,uvData,outNormalBuffer) \
+{ \
+    float2 octNormalWS = PackNormalOctQuadEncode(normalWS); \          // values between [-1, +1], must use fp32 on some platforms
+    float2 remappedOctNormalWS = saturate(octNormalWS * 0.5 + 0.5); \  // values between [ 0,  1]
+    half3 packedNormalWS = PackFloat2To888(remappedOctNormalWS); \     // values between [ 0,  1]
+	outNormalBuffer = float4(packedNormalWS, 0.0); \
+}
+#else
+#define VFXComputePixelOutputToNormalBuffer(i,normalWS,uvData,outNormalBuffer) \
+{ \
+    outNormalBuffer = float4(normalWS, 0.0); \
+}
+#endif

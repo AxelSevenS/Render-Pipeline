@@ -24,7 +24,7 @@ AmbientOcclusionFactor GetScreenSpaceAmbientOcclusion(float2 normalizedScreenSpa
 {
     AmbientOcclusionFactor aoFactor;
 
-    #if defined(_SCREEN_SPACE_OCCLUSION) /* && !defined(_SURFACE_TYPE_TRANSPARENT) */
+    #if defined(_SCREEN_SPACE_OCCLUSION) && !defined(_SURFACE_TYPE_TRANSPARENT)
     float ssao = SampleAmbientOcclusion(normalizedScreenSpaceUV);
 
     aoFactor.indirectAmbientOcclusion = ssao;

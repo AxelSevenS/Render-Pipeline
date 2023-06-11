@@ -1,6 +1,10 @@
 # Deferred Rendering Path in URP
 
-URP Universal Renderer supports two Rendering Paths: Forward and Deferred.
+URP Universal Renderer supports the following Rendering Paths:
+
+* Forward
+* Forward+
+* Deferred
 
 For information on differences between the rendering paths, see section [Rendering Path comparison](../urp-universal-renderer.md#rendering-path-comparison).
 
@@ -126,7 +130,9 @@ The Subtractive and the Shadow mask modes are optimized for the Forward Renderin
 
 **Rendering Layer Mask**
 
-Unity adds this render target to the G-buffer layout when the Light Layers feature is enabled (URP Asset, **Advanced** > **Light Layers**). The Light Layers feature might have a significant impact on the GPU performance. For more information, see section [Light Layers](#light-layers).
+Unity adds this render target to the G-buffer layout when the Use Rendering Layers option is enabled (URP Asset, **Lighting** > **Use Rendering Layers**). 
+
+Using Rendering Layers might have an impact on the GPU performance. For more information, see the page [Rendering Layers](../features/rendering-layers.md#performance).
 
 **Depth as Color**
 
@@ -411,17 +417,15 @@ The Deferred Rendering Path supports the Subtractive and the Shadowmask Lighting
 
 In the Deferred Rendering Path, the Baked Indirect Lighting mode provides better performance, since it does not require the ShadowMask render target.
 
-### Light layers
+### Rendering layers
 
-URP implements the Light Layers feature that lets you configure which Lights in a Scene affect specific meshes. Lights assigned to a specific Light Layer only affect the meshes assigned to the same Light Layer.
+URP implements the Rendering Layers feature that lets you configure which Lights in a Scene affect specific meshes. Lights assigned to a specific Rendering Layer only affect the meshes assigned to the same Rendering Layer.
 
-To enable the Light Layers feature: in the URP Asset, select **Advanced** > **Light Layers**.
-
-![Light Layers check box.](../Images/rendering-deferred/urp-asset-light-layers.png)
+For more information on Rendering Layers, see the page [Rendering Layers](../features/rendering-layers.md).
 
 **Performance impact**
 
-The Light Layers feature requires an extra G-buffer render target to store the rendering layer mask (32 bits). The extra render target is likely to have a negative impact on GPU performance.
+The Rendering Layers feature requires an extra G-buffer render target to store the rendering layer mask (32 bits). The extra render target is likely to have a negative impact on GPU performance.
 
 **Implementation notes**
 

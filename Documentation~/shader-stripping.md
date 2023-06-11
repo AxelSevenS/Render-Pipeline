@@ -44,7 +44,7 @@ Avoid including URP Assets in your build that use different [rendering paths](ur
 | Fast sRGB to linear conversion | In the **URP Asset**, in the **Post-processing** section, disable **Fast sRGB/Linear conversions**. | `_USE_FAST_SRGB_LINEAR_CONVERSION` | Forward and Deferred |
 | Holes in terrain | In the **URP Asset**, in the **Rendering** section, disable **Terrain Holes**. | `_ALPHATEST_ON` | Forward |
 | Light cookies | Remove [Cookie textures](https://docs.unity3d.com/Manual/Cookies.html) from all the lights in your project. | `_LIGHT_COOKIES` | Forward and Deferred |
-| Light layers | Disable [Light Layers](features/light-layers.md). | `_LIGHT_LAYERS` | Forward and Deferred |
+| Rendering Layers for lights | Disable [Rendering Layers for Lights](features/rendering-layers.html). | `_LIGHT_LAYERS` | Forward and Deferred |
 | Reflection Probe blending | Disable [Probe Blending](lighting/reflection-probes.html#configuring-reflection-probe-settings). | `_REFLECTION_PROBE_BLENDING` | Forward and Deferred |
 | Reflection Probe box projection | Disable [Box Projection](lighting/reflection-probes.html#configuring-reflection-probe-settings). | `_REFLECTION_PROBE_BOX_PROJECTION` | Forward and Deferred |
 | Render Pass | Disable **Native Render** in all Renderers that URP Assets use. | `_RENDER_PASS_ENABLED` | Forward and Deferred |
@@ -74,3 +74,12 @@ You should also enable **Strip Screen Coord Override Variants** in URP Global Se
 ## Strip XR and VR shader variants
 
 If you don't use [XR](https://docs.unity3d.com/Manual/XR.html) or [VR](https://docs.unity3d.com/Manual/VROverview.html), you can [disable the XR and VR modules](https://docs.unity3d.com/Documentation/Manual/upm-ui.html). This allows URP to strip XR and VR related shader variants from its standard shaders.
+
+## Remove variants if you use a custom Renderer Feature
+
+If you create a [custom Renderer Feature](xref:UnityEngine.Rendering.Universal.ScriptableRendererFeature), you can use the [FilterAttribute](https://docs.unity3d.com/2023.1/Documentation/ScriptReference/ShaderKeywordFilter.FilterAttribute.html) API to remove shader variants when you enable or disable settings in the [URP Asset](universalrp-asset.md).
+
+For example, you can do the following:
+
+1. Use [[SerializeField]](https://docs.unity3d.com/ScriptReference/SerializeField.html) to add a Boolean variable to the custom Renderer Feature and add it as a checkbox in the URP Asset Inspector.
+2. Use [ShaderKeywordFilter.RemoveIf](https://docs.unity3d.com/2023.1/Documentation/ScriptReference/ShaderKeywordFilter.RemoveIfAttribute.html) to remove shader variants when you enable the checkbox.

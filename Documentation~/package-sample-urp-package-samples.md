@@ -36,6 +36,15 @@ The `URP Package Samples/LensFlares` folder contains lens flare examples. The fo
 | **Sun flare**           | The `LensFlares/SunFlare` example demonstrates how to use the [Lens Flare component](shared/lens-flare/lens-flare-component.md) to add a lens flare effect to the main directional light in the scene. |
 | **Lens flare showroom** | The `LensFlares/LensFlareShowroom` example helps you to author lens flares. To use it:</br>1. In the Hierarchy window, select the **Lens Flare** GameObject.</br>2. In the Lens Flare component, assign a [LensFlareDataSRP](https://docs.unity3d.com/Packages/com.unity.render-pipelines.core@12.0/api/UnityEngine.Rendering.LensFlareDataSRP.html) asset to the **Lens Flare Data** property.</br>3. Change the Lens Flare component and data properties and view the lens flare in the Game View.<br/>**Note**: If the text box is in the way, disable the Canvas in the scene. |
 
+<a name="lighting"></a>
+## Lighting
+
+The `URP Package Samples/Lighting` folder contains examples for [lighting](lighting.md). The following table describes each lighting example in this folder.
+
+| **Example**        | **Description**                                              |
+| ------------------ | ------------------------------------------------------------ |
+| **Reflection probes**   | The example in `Lighting/Reflection Probes` uses [reflection probes](lighting/reflection-probes.md) to create reflection maps for a reflective sphere GameObject. This sample shows how the **Probe Blending** and **Box Projection** settings can change the reflection within a scene that uses reflection probes. |
+
 <a name="renderer-features"></a>
 ## Renderer Features
 

@@ -50,6 +50,8 @@ You can disable the runtime UI using the [enableRuntimeUI](https://docs.unity3d.
 
 The **Rendering Debugger** window contains the following sections:
 
+* [Display Stats](#display-stats)
+
 * [Frequently Used](#frequently-used)
 
 * [Material](#material)
@@ -61,6 +63,79 @@ The **Rendering Debugger** window contains the following sections:
 The following illustration shows the Rendering Debugger window in the Scene view.
 
 ![Rendering Debugger window.](../Images/rendering-debugger/rendering-debugger-ui-sections.png)
+
+### Display Stats
+
+The **Display Stats** panel is only visible in play mode. You can use it to debug performance issues in your project.
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="1"><strong>Debug&#160;Option</strong></th>
+      <th colspan="2"><strong>Description</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="1"><strong>Frame Rate</strong></td>
+      <td colspan="2">Displays the frame rate in frames per second for the current camera view.</td>
+    </tr>
+    <tr>
+      <td rowspan="1"><strong>Frame Time</strong></td>
+      <td colspan="2">Displays the total frame time for the current camera view.</td>
+    </tr>
+    <tr>
+      <td rowspan="1"><strong>RT Mode</strong></td>
+      <td colspan="2">If you enable ray tracing, it displays the ray tracing Tier used during rendering.</td>
+    </tr>
+    <tr>
+      <td rowspan="11"><strong>Count Rays</strong></td>
+      <td colspan="2">If you enable ray tracing, enable the checkbox to count the number of traced rays per effect (in MRays / frame).</td>
+    </tr>
+    <tr>
+      <td><strong>Ambient Occlusion</strong></td>
+      <td>The number of rays that were traced for Ambient Occlusion (AO) computations, when you enable RT AO.</td>
+    </tr>
+    <tr>
+      <td><strong>Shadows Directional</strong></td>
+      <td>The number of rays that were traced for directional lights, when you enable RT shadows.</td>
+    </tr>
+    <tr>
+      <td><strong>Shadows Area</strong></td>
+      <td>The number of rays that were traced towards area lights, when you enable RT shadows.</td>
+    <tr>
+      <td><strong>Shadows Point/Spot</strong></td>
+      <td>The number of rays that were traced towards punctual (point/spot) lights, when you enable RT shadows.</td>
+    </tr>
+    <tr>
+      <td><strong>Reflection Forward</strong></td>
+      <td>The number of rays that were traced for reflection computations using forward shading.</td>
+    </tr>
+    <tr>
+      <td><strong>Reflection Deferred</strong></td>
+      <td>TThe number of rays that were traced for reflection computations using deferred shading.</td>
+    <tr>
+      <td><strong>Diffuse GI Forward</strong></td>
+      <td>The number of rays that were traced for diffuse Global Illumination (GI) computations using forward shading.</td>
+    </tr>
+    <tr>
+      <td><strong>Diffuse GI Deferred</strong></td>
+      <td>The number of rays that were traced for diffuse Global Illumination (GI) computations using deferred shading.</td>
+    </tr>
+    <tr>
+      <td><strong>Recursive</strong></td>
+      <td>The number of rays that were traced for diffuse Global Illumination (GI) computations when you enable recursive RT.</td>
+    </tr>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td>The total number of rays that were traced.</td>
+    </tr>
+        <tr>
+      <td rowspan="1"><strong>Debug&#160;XR&#160;Layout</strong></td>
+      <td colspan="2">Enable to display XR passes debug informations.<br/><br/>This mode is only available in the editor and development builds.</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Frequently Used
 
@@ -113,7 +188,7 @@ The properties in this section let you visualize different rendering features.
 | **Map Overlays**               | Specifies which render pipeline texture to overlay on the screen. The options are:<ul><li>**None**: Renders the scene normally without a texture overlay.</li><li>**Depth**: Overlays the camera's depth texture on the screen.</li><li>**Additional Lights Shadow Map**: Overlays the [shadow map](https://docs.unity3d.com/Manual/shadow-mapping.html) that contains shadows cast by lights other than the main directional light.</li><li>**Main Light Shadow Map**: Overlays the shadow map that contains shadows cast by the main directional light.</li></ul> |
 | **&nbsp;&nbsp;Map Size**       | The width and height of the overlay texture as a percentage of the view window URP displays it in. For example, a value of **50** fills up a quarter of the screen (50% of the width and 50% of the height). |
 | **HDR**                        | Indicates whether to use [high dynamic range (HDR)](https://docs.unity3d.com/Manual/HDR.html) to render the scene. Enabling this property only has an effect if you enable **HDR** in your URP Asset. |
-| **MSAA**                       | Indicates whether to use multi-sample anti-aliasing (MSAA) to render the scene. Enabling this property only has an effect if:<ul><li>You set **Anti Aliasing (MSAA)** to a value other than **Disabled** in your URP Asset.</li><li>You use the Game View. MSAA has no effect in the Scene View.</li></ul> |
+| **MSAA**                       | Indicates whether to use [Multisample Anti-aliasing (MSAA)](./../anti-aliasing.md#msaa) to render the scene. Enabling this property only has an effect if:<ul><li>You set **Anti Aliasing (MSAA)** to a value other than **Disabled** in your URP Asset.</li><li>You use the Game View. MSAA has no effect in the Scene View.</li></ul> |
 | **Post-processing**            | Specifies how URP applies post-processing. The options are:<ul><li>**Disabled**: Disables post-processing.</li><li>**Auto**: Unity enables or disables post-processing depending on the currently active debug modes. If color changes from post-processing would change the meaning of a debug mode's pixel, Unity disables post-processing. If no debug modes are active, or if color changes from post-processing don't change the meaning of the active debug modes' pixels, Unity enables post-processing.</li><li>**Enabled**: Applies post-processing to the image that the camera captures.</li></ul> |
 | **Additional Wireframe Modes** | Specifies whether and how to render wireframes for meshes in your scene. The options are:<ul><li>**None**: Doesn't render wireframes.</li><li>**Wireframe**: Exclusively renders edges for meshes in your scene. In this mode, you can see the wireframe for meshes through the wireframe for closer meshes.</li><li>**Solid Wireframe**: Exclusively renders edges and faces for meshes in your scene. In this mode, the faces of each wireframe mesh hide edges behind them.</li><li>**Shaded Wireframe**: Renders edges for meshes as an overlay. In this mode, Unity renders the scene in color and overlays the wireframe over the top.</li></ul> |
 | **Overdraw**                   | Indicates whether to render the overdraw debug view. This is useful to see where Unity draws pixels over one other. |
