@@ -9,7 +9,7 @@
 #pragma shader_feature_local _ _DETAIL_MULX2 _DETAIL_SCALED
 #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
 #pragma shader_feature_local_fragment _ALPHATEST_ON
-#pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
+#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON
 #pragma shader_feature_local_fragment _EMISSION
 #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
 #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
@@ -22,6 +22,7 @@
 // Universal Pipeline keywords
 #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
 #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
 #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
 #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
 #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
@@ -30,7 +31,9 @@
 #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
 #pragma multi_compile_fragment _ _LIGHT_LAYERS
 #pragma multi_compile_fragment _ _LIGHT_COOKIES
-#pragma multi_compile _ _CLUSTERED_RENDERING
+#pragma multi_compile _ _FORWARD_PLUS
+#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+
 
 // -------------------------------------
 // Unity defined keywords
@@ -39,6 +42,7 @@
 #pragma multi_compile _ DIRLIGHTMAP_COMBINED
 #pragma multi_compile _ LIGHTMAP_ON
 #pragma multi_compile _ DYNAMICLIGHTMAP_ON
+#pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
 #pragma multi_compile_fog
 #pragma multi_compile_fragment _ DEBUG_DISPLAY
 
@@ -46,7 +50,7 @@
 // GPU Instancing
 #pragma multi_compile_instancing
 #pragma instancing_options renderinglayer
-#pragma multi_compile _ DOTS_INSTANCING_ON
+#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
 
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Passes/Lit/LitInput.hlsl"
